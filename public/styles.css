@@ -1,0 +1,23 @@
+.clearfix {
+  overflow: auto;
+}
+
+body{
+  background: #ef10ef;
+}
+h3{
+  margin-top: 40px;
+}
+span{
+  padding: 0 3px;
+}
+ul{
+  list-style-type: none
+}
+li{
+  padding: 0 2px;
+}
+section{
+  margin-right: 25%;
+  margin-left: 25%;
+}

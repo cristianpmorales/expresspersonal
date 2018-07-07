@@ -1,0 +1,124 @@
+const express = require('express')
+const app = express()
+const bodyParser = require('body-parser')
+const MongoClient = require('mongodb').MongoClient
+
+var db
+
+MongoClient.connect('mongodb://user:user123@ds229701.mlab.com:29701/bookslist', (err, database) => {
+  if (err) return console.log(err)
+  db = database
+  app.listen(process.env.PORT || 8000, () => {
+    console.log('listening on 8000')
+  })
+})
+
+app.set('view engine', 'ejs')
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(bodyParser.json())
+app.use(express.static('public'))
+
+app.get('/', (req, res) => {
+  db.collection('books').find().toArray((err, result) => {
+    if (err) return console.log(err)
+    res.render('index.ejs', {books: result})
+  })
+})
+//Form for books to read ends here
+//Form for books read start here
+app.get('/react', (req, res) => {
+  db.collection('books').find().toArray((err, result) => {
+    if (err) return console.log(err)
+    res.json(result)
+  })
+})
+
+app.post('/messages', (req, res) => {
+  db.collection('books').save({title: req.body.title, toreadtitle:req.body.toreadtitle, aurthor:req.body.aurthor, toreadaurthor:req.body.aurthor, thumbUp: 0, thumbDown:0}, (err, result) => {
+    if (err) return console.log(err)
+    console.log('saved to database')
+    res.redirect('/')
+  })
+})
+app.post('/bookstoread', (req, res) => {
+  db.collection('books').save({title: req.body.title, toreadtitle:req.body.toreadtitle, aurthor:req.body.toreadaurthor, toreadaurthor:req.body.aurthor, thumbUp: 0, thumbDown:0}, (err, result) => {
+    if (err) return console.log(err)
+    console.log('saved to database')
+    res.redirect('/')
+  })
+})
+
+app.put('/messages', (req, res) => {
+  db.collection('messages')
+  .findOneAndUpdate({name: req.body.name, ms: req.body.ms}, {
+    $set: {
+      thumbUp:req.body.thumbUp + 1
+    }
+  }, {
+    sort: {_id: -1},
+    upsert: true
+  }, (err, result) => {
+    if (err) return res.send(err)
+    res.send(result)
+  })
+})
+
+app.delete('/messages', (req, res) => {
+  db.collection('books').findOneAndDelete({title: req.body.title,  aurthor:req.body.aurthor, thumbUp: 0, thumbDown:0}, (err, result) => {
+    if (err) return res.send(500, err)
+    res.send('Message deleted!')
+  })
+})
+
+\
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Libros</title>
+  <link rel="shortcut icon" href="faviconbook.ico">
+  <link rel="stylesheet" href="font-awesome.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <h2>How many books have you read this year?</h2>
+
+  <h3>List of books</h3>
+  <ul class="messages">
+  <% for(var i=0; i< books.length; i++) {%>
+    <li class="messages">
+      <span><%= books[i].title%></span>
+      <span>by <%= books[i].aurthor%></span>
+      <span><%= books[i].toreadtitle %></span>
+      <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+      <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+      <span><i class="fa fa-trash" aria-hidden="true"></i></span>
+    </li>
+  <% } %>
+  </ul>
+
+  <h2>Add a message</h2>
+
+  <form action="/messages" method="POST">
+    <p>Enter the title of the book you already read</p>
+    <label for="title">Title</label> <input type="text" placeholder="title" name="title">
+    <input type="text" placeholder="message" name="aurthor">
+    <button type="submit">Submit</button>
+  </form>
+
+   <!-- ******************** New form starts here ********************* -->
+
+  <form action="/bookstoread" method="POST">
+    <p>Enter the title of the book you would like to read</p>
+    <label for="toreadtitle">Title</label> <input type="text" placeholder="to read title" name="toreadtitle">
+    <input type="text" placeholder="message" name="toreadaurthor">
+    <button type="submit">Submit</button>
+  </form>
+  <script src="main.js"></script>
+
+</body>
+</html>

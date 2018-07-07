@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Libros</title>
+  <link rel="shortcut icon" href="faviconbook.ico">
+  <link rel="stylesheet" href="font-awesome.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section>
+      <h2>How many books have you read this year?</h2>
+
+      <h3>List of books</h3>
+      <ul class="messages">
+      <% for(var i=0; i< books.length; i++) {%>
+        <li class="messages">
+          <span><%= books[i].title%></span>
+          <span><%= books[i].aurthor%></span>
+          <span><%= books[i].thumbUp %></span>
+          <span><%= books[i].thumbDown %></span>
+          <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+          <span><i class="fa fa-thumbs-down" aria-hidden="true"></i></span>
+          <span><i class="fa fa-trash" aria-hidden="true"></i></span>
+        </li>
+      <% } %>
+      </ul>
+
+      <h2>Add a message</h2>
+
+      <form action="/booktitles" method="POST">
+        <p>Enter the title of the book you already read</p>
+        <label for="title">Title</label> <input type="text" placeholder="title" name="title">
+        <label for="aurthor">Aurthor</label> <input type="text" placeholder="message" name="aurthor">
+        <button type="submit">Submit</button>
+      </form>
+  </section>
+
+   <!-- ******************** New form starts here ********************* -->
+   <script src="main.js"></script>
+</body>
+</html>
